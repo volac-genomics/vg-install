@@ -1,0 +1,58 @@
+---
+- name: singularity | install software dependencies
+  apt:
+    state: latest
+    pkg:
+      - libssl-dev
+      - uuid-dev
+      - libgpgme11-dev
+      - squashfs-tools
+      - libseccomp-dev
+  become: true
+
+- name: singularity | grab installer for go
+  get_url:
+   url: "https://dl.google.com/go/go{{ go_version }}.linux-amd64.tar.gz"
+   dest: "{{ home }}"
+   mode: 0755
+
+- name: singularity | install go
+  shell: "tar -C /usr/local -xzf {{ home }}/go{{ go_version }}.linux-amd64.tar.gz"
+  become: yes
+
+- name: singularity | create directory for singularity
+  file:
+    path: "{{ home }}/singularity/src/github.com/sylabs/"
+    state: directory
+    recurse: yes
+
+- name: singularity | clone the Singularity repository
+  git:
+    repo: https://github.com/sylabs/singularity.git
+    version: "{{ singularity_version }}"
+    dest: "{{ home }}/singularity/src/github.com/sylabs/singularity"
+
+- name: singularity | compile the Singularity binary | mconfig
+  shell: "export PATH=/usr/local/go/bin:$PATH; ./mconfig --prefix=/usr/local"
+  args:
+    chdir: "{{ home }}/singularity/src/github.com/sylabs/singularity"
+  become: true
+
+- name: singularity | compile the Singularity binary | make
+  make:
+    chdir: "{{ home }}/singularity/src/github.com/sylabs/singularity/builddir"
+  become: yes
+
+- name: singularity | compile the Singularity binary | make install
+  make:
+    target: install
+    chdir: "{{ home }}/singularity/src/github.com/sylabs/singularity/builddir"
+  become: yes
+
+- name: singularity | remove singularity source code
+  shell: "rm -rf {{ home }}/singularity"
+  become: yes
+
+- name: singularity | remove go tar
+  shell: "rm -f {{ home }}/go{{ go_version }}.linux-amd64.tar.gz"
+  become: yes

@@ -1,0 +1,27 @@
+---
+- name: docker | install docker dependencies
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+    state: latest
+  become: true
+
+- name: docker | add docker gpg key
+  shell: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor --batch --yes -o /usr/share/keyrings/docker-archive-keyring.gpg"
+  
+- name: docker | add stable repo
+  shell: 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+  become: true
+
+- name: docker | install/update docker
+  apt:
+    state: present
+    pkg:
+      - "docker-ce={{ docker_version }}"
+      - "docker-ce-cli={{ docker_version }}"
+      - containerd.io
+    update_cache: yes
+  become: true

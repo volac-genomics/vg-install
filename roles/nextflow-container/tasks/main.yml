@@ -1,0 +1,36 @@
+### assumes ubuntu image
+---
+- name: update apt cache
+  apt: update_cache=yes
+  become: true
+
+- name: install packages
+  apt: 
+      pkg: 
+          - curl
+          - build-essential
+          - git
+          - pkg-config
+      state: latest
+  become: true
+
+- name: create directory
+  file:
+    path: "{{ home }}/genome_tools"
+    state: directory
+    mode: 0775
+
+- name: clone the VG1 repository
+  git:
+    repo: https://github.com/AmyBaldwin/VG_1.git
+    version: master
+    dest: "{{ home }}/genome_tools/VG_1"
+
+- name: install nextflow
+  include_tasks: nextflow.yml
+
+- name: install docker
+  include_tasks: docker.yml
+
+- name: install singularity
+  include_tasks: singularity.yml

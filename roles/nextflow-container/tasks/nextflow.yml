@@ -1,0 +1,14 @@
+---
+- name: nextflow | install nextflow
+  shell: "wget -qO- https://github.com/nextflow-io/nextflow/releases/download/v{{ nextflow_version }}/nextflow-{{ nextflow_version }}-all | bash"
+
+- name: nextflow | copy nextflow to bin and set permissions
+  copy:
+    src: nextflow
+    dest: /usr/local/bin/nextflow
+    mode: a+x
+
+- name: nextflow | remove old file
+  file:
+    path: nextflow
+    state: absent
