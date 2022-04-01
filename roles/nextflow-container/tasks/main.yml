@@ -20,11 +20,23 @@
     state: directory
     mode: 0775
 
-- name: clone the VG1 repository
+- name: clone the Tool_1 repository
   git:
-    repo: https://github.com/AmyBaldwin/VG_1.git
-    version: master
-    dest: "{{ home }}/genome_tools/VG_1"
+    repo: https://github.com/volac-genomics/Tool_1.git
+    version: main
+    dest: "{{ home }}/genome_tools/Tool_1"
+
+- name: clone the Tool_2 repository
+  git:
+    repo: https://github.com/volac-genomics/Tool_2.git
+    version: main
+    dest: "{{ home }}/genome_tools/Tool_2"
+
+- name: clone the Tool_3 repository
+  git:
+    repo: https://github.com/volac-genomics/Tool_3.git
+    version: main
+    dest: "{{ home }}/genome_tools/Tool_3"
 
 - name: install nextflow
   include_tasks: nextflow.yml

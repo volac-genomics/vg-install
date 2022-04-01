@@ -25,9 +25,8 @@ jobs:
           options: |
             --verbose
 
-      - name: test VG_1
-        working-directory: /home/runner/genome_tools/VG_1
+      - name: test Tool_1
+        working-directory: /home/runner/genome_tools/Tool_1
         run: |
-          mkdir input_tool1
           wget -O input_tool1/test.fa https://www.ebi.ac.uk/ena/browser/api/fasta/GCA_002849515.1
           nextflow run tool_1.nf -profile ghactions
